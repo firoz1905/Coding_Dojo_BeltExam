@@ -16,7 +16,7 @@ class TripManager(models.Manager):
             errors['from_date']="Travel from date cannot be empty!!"
         if postData['from_date']:
             from_date_form=datetime.strptime(postData['from_date'],"%Y-%m-%d")
-            if from_date_form >= datetime.now():
+            if from_date_form < datetime.now():
                 errors['from_date']="Your Travel From date cannot be in the past"
         if not postData['to_date']:
             errors['to_date']="Travel to date cannot be empty!!"
