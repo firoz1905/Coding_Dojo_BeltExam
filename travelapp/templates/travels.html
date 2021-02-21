@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travels</title>
+    {% load static %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+</head>
+
+<body>
+    <nav class="navbar navbar-dark bg-dark">
+        <div class="container-fluid">
+            <p class="h1" style="color: #e3f2fd;"> Welcome , {{logged_user.first_name}} ! </p>
+            <a href="/travels/addtrip">Add a Trip </a>
+            <a href="/travels/logout">logout</a>
+        </div>
+    </nav>
+    <div class="d-flex flex-column justify-content-center">
+        <div class="yourtrips">
+            <p class="h3"> Your Trip Schedules :</p>
+            <table class="table table-bordered border-primary">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Destination</th>
+                        <th scope="col">Travel Start Date</th>
+                        <th scope="col">Travel End Date</th>
+                        <th scope="col">Plan</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for trip in trips%}
+                    {%if trip in logged_user.joined_trips.all %}
+                    <tr>
+                        <th scope="row">{{trip.id}}</th>
+                        <td><a href="{% url 'tripview' trip.id %}" nethod="GET">{{trip.destination}}</a></td>
+                        <td>{{trip.from_date}}</td>
+                        <td>{{trip.to_date}}</td>
+                        <td>{{trip.description}}</td>
+                        <td><a href="{% url 'cancel' trip.id %}">Cancel</a>
+                            {% if logged_user == trip.added_by %}
+                                    <a href="{% url 'delete' trip.id %}" method="GET">Delete</a>
+                              </td>
+                            {%endif%}
+                    </tr>
+                        {%endif%}
+                        {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="otherusertrips">
+            <p class="h3"> Other User's Travel Plans :</p>
+            <table class="table table-bordered border-primary">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Travel Start Date</th>
+                        <th scope="col">Travel End Date</th>
+                        <th scope="col">Do you Want to Join ?</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for trip in trips %}
+                    {% if trip not in logged_user.joined_trips.all%}
+                    <tr>
+                        <th scope="row">{{trip.id}}</th>
+                        <td><a href="{% url 'tripview' trip.id %}">{{trip.destination}}</a></td>
+                        <td>{{trip.from_date}}</td>
+                        <td>{{trip.to_date}}</td>
+                        <td><a href="{% url 'join' trip.id %}" method="GET">Join</a></td>
+                    </tr>
+                    {%endif%}
+                    {%endfor%}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+
+</html>
